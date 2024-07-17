@@ -7,6 +7,9 @@
 #include "IVInventorySlotsWidget.generated.h"
 class UIVInventorySlotWidget;
 class UUniformGridPanel;
+class UIVInventoryEntryWidget;
+class UIVItemInstance;
+class UCanvasPanel;
 /**
  * 
  */
@@ -20,6 +23,13 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
+	void OnInventoryEntryChanged(const FIntPoint& InItemSlotPos, TObjectPtr<UIVItemInstance> Item);
+	virtual bool NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+
+private:
+	void FinishDrag();
 
 protected:
 	UPROPERTY()
@@ -28,6 +38,21 @@ protected:
 	UPROPERTY()
 	TArray<TObjectPtr<UIVInventorySlotWidget>> SlotWidgets;
 
+	UPROPERTY()
+	TSubclassOf<UIVInventoryEntryWidget> EntryWidgetClass;
+
+	UPROPERTY()
+	TArray<TObjectPtr<UIVInventoryEntryWidget>> EntryWidgets;
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UUniformGridPanel> GridPanel_Slots;
+
+private:
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UCanvasPanel> CanvasPanel_Entries;
+
+private:
+	FIntPoint PrevDragOverSlotPos = FIntPoint(-1, -1);
+	const int X_COUNT = 10;
+	const int Y_COUNT = 5;
 };
